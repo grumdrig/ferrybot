@@ -49,15 +49,66 @@ async function go() {
 
 	console.log("all selected up. now continue");
 
+	await page.waitForTimeout(2000);
+
 	await page.waitForSelector("#MainContent_btnContinue");
 	await page.click("#MainContent_btnContinue");
 
 	console.log("we continued");
 
-	await page.waitForTimeout("2000");
 
-	let tablesel = "#MainContent_gvschedule";
+	let tablesel = "#MainContent_gvschedule tr td:nth-child(1) input:enabled";
+	await page.waitForSelector(tablesel, { timeout: 10000 });
+	let times = await page.$$eval(tablesel, inputs => inputs.map(input => {
+		//    span          td            tr
+		let time = input.parentElement.parentElement.parentElement.children[1].innerText;
+		return [input.id, time];
+	}));
+	if (times.length == 0) {
+		console.log("Nothing available");
+		return;
+	}
 
+	let [id,time] = times[times.length-1];
+	console.log('Booking', time);
+	await page.click('#' + id);
+
+	await page.waitForTimeout(2000);
+	await page.waitForSelector("#MainContent_hAddToCart");
+
+	// let captcha = await page.$(".recaptcha-checkbox");
+	// if (!captcha) {
+	// 	console.log("cant find captcha");
+	// 	return;
+	// }
+	// console.log(captcha);
+	let captchaPos = await page.evaluate(() => {
+		let x = 0, y = 0;
+		let element = document.querySelector("#MainContent_hAddToCart");
+		while (element) {
+			x += element.offsetLeft;
+			y += element.offetTop;
+			element = element.offsetParent;
+		}
+		y -= 50;  // captcha is up there somewhere
+        return {x, y};
+    });
+
+	console.log(captchaPos);
+
+	await page.mouse.move(captchaPos.x, captchaPos.y);
+
+
+	// document.querySelector(".recaptcha-checkbox");
+
+	// <div class="recaptcha-checkbox-border" role="presentation"></div>
+
+	// document.querySelectorAll("#MainContent_gvschedule tr td:nth-child(1) input:enabled")[0].parentElement.parentElement.parentElement.tagNam
+	// tr.children[1].innerText == "5:30 AM";
+
+	// reCAPTCHA couldn't find user-provided function: loadCaptcha
+	// document.querySelector('#processMessage')
+	//MainContent_btnRefresh
 }
 
 
