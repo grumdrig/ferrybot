@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 
-`Washington State Ferry reserver`
+`Washington State Ferry reserver
+
+Install:
+
+	$ npm i puppeteer
+`
+
 
 
 const fs = require('fs');
@@ -76,39 +82,26 @@ async function go() {
 	await page.waitForTimeout(2000);
 	await page.waitForSelector("#MainContent_hAddToCart");
 
-	// let captcha = await page.$(".recaptcha-checkbox");
-	// if (!captcha) {
-	// 	console.log("cant find captcha");
-	// 	return;
-	// }
-	// console.log(captcha);
-	let captchaPos = await page.evaluate(() => {
-		let x = 0, y = 0;
-		let element = document.querySelector("#MainContent_hAddToCart");
-		while (element) {
-			x += element.offsetLeft;
-			y += element.offetTop;
-			element = element.offsetParent;
-		}
-		y -= 50;  // captcha is up there somewhere
-        return {x, y};
-    });
 
-	console.log(captchaPos);
+	// This half-assed attempt to handle the captcha doesn't come close to working
 
-	await page.mouse.move(captchaPos.x, captchaPos.y);
+	// let captchaPos = await page.evaluate(() => {
+	// 	let x = 0, y = 0;
+	// 	let element = document.querySelector("#MainContent_hAddToCart");
+	// 	while (element) {
+	// 		x += element.offsetLeft;
+	// 		y += element.offetTop;
+	// 		element = element.offsetParent;
+	// 	}
+	// 	y -= 50;  // captcha is up there somewhere
+	//      return {x, y};
+ 	//  });
+
+	// console.log(captchaPos);
+
+	// await page.mouse.move(captchaPos.x, captchaPos.y);
 
 
-	// document.querySelector(".recaptcha-checkbox");
-
-	// <div class="recaptcha-checkbox-border" role="presentation"></div>
-
-	// document.querySelectorAll("#MainContent_gvschedule tr td:nth-child(1) input:enabled")[0].parentElement.parentElement.parentElement.tagNam
-	// tr.children[1].innerText == "5:30 AM";
-
-	// reCAPTCHA couldn't find user-provided function: loadCaptcha
-	// document.querySelector('#processMessage')
-	//MainContent_btnRefresh
 }
 
 
